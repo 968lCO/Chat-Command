@@ -165,6 +165,36 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			cmm:say("[".. peer:name() .."] is Normal player")
 		end
 	end)
+	cmm:AddCommand("bta", false, false, function(peer)
+		if not peer or not peer:unit() then
+			peer = managers.network:session():local_peer()
+		end
+		if peer and peer:unit() then
+			local unit = peer:unit()
+			local nowtime = math.floor(TimerManager:game():time())
+			local pid = peer:id()
+			local pname = peer:name()
+			local pos = unit:position()
+			local rot = unit:rotation()
+			if ChatCommand.bta_time[pid] < nowtime then
+				ChatCommand.rtd_time[pid] = nowtime + 120
+				cmm:say("[".. pname .."] call for Bombing Strike!!")
+				local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
+				local _start_pos = pos + Vector3(-2000, -2000, 0)
+				local _d = tweak_data.blackmarket.projectiles.frag.time_cheat or 0.05
+				ChatCommand.time2loopcheck = true
+				ChatCommand.throw_projectile = {}
+				for i = 1, 10 do
+					for j = 1, 10 do
+						local _table_size = table.size(ChatCommand.throw_projectile) + 1
+						table.insert(ChatCommand.throw_projectile, {enable = true, projectile_index = projectile_index, pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
+					end
+				end
+			else
+				cmm:say("[".. pname .."] you still need to wait [".. (ChatCommand.bta_time[pid] - nowtime) .."]s for next roll.")				
+			end
+		end
+	end)
 	cmm:AddCommand("rtd", false, false, function(peer)
 		if not peer or not peer:unit() then
 			peer = managers.network:session():local_peer()
@@ -178,7 +208,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			local rot = unit:rotation()
 			if ChatCommand.rtd_time[pid] < nowtime then
 				ChatCommand.rtd_time[pid] = nowtime + 20
-				local _roll = math.random(1, 14)
+				local _roll = math.random(1, 15)
 				if _roll == 1 then
 					cmm:say("[".. pname .."] roll for Doctor Bag!!")
 					DoctorBagBase.spawn( pos, rot, 0 )
@@ -205,7 +235,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 					for i = 1, 10 do
 						ProjectileBase.throw_projectile(projectile_index, pos + Vector3(_xy_fixed[math.random(8)], _xy_fixed[math.random(8)], 50), Vector3(0, 0, -1), 1)
 					end
-				elseif _roll >= 12 and _roll <= 13 then
+				elseif _roll == 12 then
 					cmm:say("[".. pname .."] roll for Bomb this Area!!")
 					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
 					local _start_pos = pos + Vector3(-2000, -2000, 0)
@@ -218,6 +248,22 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 							table.insert(ChatCommand.throw_projectile, {enable = true, projectile_index = projectile_index, pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
 						end
 					end
+				elseif _roll == 13 or _roll == 14 then
+					if _roll == 13 then
+						cmm:say("[".. pname .."] roll for Smoke this Area!!")
+					elseif _roll == 14 then
+						cmm:say("[".. pname .."] roll for Flash this Area!!")
+					end
+					local _start_pos = pos + Vector3(-2000, -2000, 0)
+					local _d = tweak_data.blackmarket.projectiles.frag.time_cheat or 0.05
+					ChatCommand.time2loopcheck = true
+					ChatCommand.throw_flash = {}
+					for i = 1, 10 do
+						for j = 1, 10 do
+							local _table_size = table.size(ChatCommand.throw_flash) + 1
+							table.insert(ChatCommand.throw_flash, {enable = true, is_smoke = (_roll == 12 and true or false), pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
+						end
+					end
 				else
 					cmm:say("[".. pname .."] roll for nothing!!")
 				end
@@ -228,6 +274,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 		end
 	end)	
 	cmm:AddCommand("help", false, false, function()
+		cmm:say("[!bta: Call for Bombing Strike]")
 		cmm:say("[!rtd: Roll something special]")
 		cmm:say("[!jail: Send yourself to jail]")
 		cmm:say("[!vip: Let you know your level]")
