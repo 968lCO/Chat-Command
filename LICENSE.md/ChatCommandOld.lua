@@ -180,7 +180,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 				ChatCommand.rtd_time[pid] = nowtime + 120
 				local _roll = math.random(1, 2)
 				elseif _roll >= 1 and _roll <= 2 then
-					cmm:say("[".. pname .."] roll for Bomb this Area!!")
+					cmm:say("[".. pname .."] call for Bombing Strike!!")
 					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
 					local _start_pos = pos + Vector3(-2000, -2000, 0)
 					local _d = tweak_data.blackmarket.projectiles.frag.time_cheat or 0.05
