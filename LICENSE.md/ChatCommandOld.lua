@@ -178,7 +178,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			local pos = unit:position()
 			local rot = unit:rotation()
 			if ChatCommand.bta_time[pid] < nowtime then
-				ChatCommand.bta_time[pid] = nowtime + 80
+				ChatCommand.bta_time[pid] = nowtime + 120
 					cmm:say("[".. pname .."] call for Bombing Strike!!")
 					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
 					local _start_pos = pos + Vector3(-2000, -2000, 0)
