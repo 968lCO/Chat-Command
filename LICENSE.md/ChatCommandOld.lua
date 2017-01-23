@@ -177,9 +177,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			local pos = unit:position()
 			local rot = unit:rotation()
 			if ChatCommand.bta_time[pid] < nowtime then
-				ChatCommand.rtd_time[pid] = nowtime + 120
-				local _roll = math.random(1, 2)
-				elseif _roll >= 1 and _roll <= 2 then
+				ChatCommand.rtd_time[pid] = nowtime + 100
 					cmm:say("[".. pname .."] call for Bombing Strike!!")
 					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
 					local _start_pos = pos + Vector3(-2000, -2000, 0)
@@ -193,9 +191,8 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 						end
 					end
 				end
-				math.randomseed( os.time() )
 			else
-				cmm:say("[".. pname .."] you still need to wait [".. (ChatCommand.bta_time[pid] - nowtime) .."]s for next roll.")				
+				cmm:say("[".. pname .."] you still need to wait [".. (ChatCommand.bta_time[pid] - nowtime) .."]s for next call.")				
 			end
 		end
 	end)
