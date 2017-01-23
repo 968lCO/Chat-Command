@@ -6,6 +6,7 @@ _G.ChatCommand = _G.ChatCommand or {}
 ChatCommand.now_version = "[2016.11.15]"
 ChatCommand.rtd_time = {0, 0, 0, 0}
 ChatCommand.bta_time = {0, 0, 0, 0}
+ChatCommand.bfs_time = {0, 0, 0, 0}
 ChatCommand.VIP_LIST = ChatCommand.VIP_LIST or {}
 ChatCommand.VIP_LIST_IDX = ChatCommand.VIP_LIST_IDX or {}
 ChatCommand.time2loopcheck = false
@@ -166,6 +167,48 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			cmm:say("[".. peer:name() .."] is Normal player")
 		end
 	end)
+	cmm:AddCommand("begfordoc", false, false, function(peer)
+		if not peer or not peer:unit() then
+			peer = managers.network:session():local_peer()
+		end
+		if peer and peer:unit() then
+			local unit = peer:unit()
+			local nowtime = math.floor(TimerManager:game():time())
+			local pid = peer:id()
+			local pname = peer:name()
+			local pos = unit:position()
+			local rot = unit:rotation()
+			if ChatCommand.bfs_time[pid] < nowtime then
+
+				ChatCommand.bfs_time[pid] = nowtime + 9999
+				cmm:say("[".. pname .."] God pity you.")
+				DoctorBagBase.spawn( pos, rot, 0 )
+			else
+				cmm:say("[".. pname .."] you alreaddy beg once.")				
+			end
+		end
+	end)
+	cmm:AddCommand("begforammo", false, false, function(peer)
+		if not peer or not peer:unit() then
+			peer = managers.network:session():local_peer()
+		end
+		if peer and peer:unit() then
+			local unit = peer:unit()
+			local nowtime = math.floor(TimerManager:game():time())
+			local pid = peer:id()
+			local pname = peer:name()
+			local pos = unit:position()
+			local rot = unit:rotation()
+			if ChatCommand.bfs_time[pid] < nowtime then
+
+				ChatCommand.bfs_time[pid] = nowtime + 9999
+				cmm:say("[".. pname .."] God pity you.")
+				AmmoBagBase.spawn( pos, rot, 0 )
+			else
+				cmm:say("[".. pname .."] you alreaddy beg once.")				
+			end
+		end
+	end)
 	cmm:AddCommand("bta", false, false, function(peer)
 		if not peer or not peer:unit() then
 			peer = managers.network:session():local_peer()
@@ -178,18 +221,18 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			local pos = unit:position()
 			local rot = unit:rotation()
 			if ChatCommand.bta_time[pid] < nowtime then
-				ChatCommand.bta_time[pid] = nowtime + 120
-					cmm:say("[".. pname .."] call for Bombing Strike!!")
-					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
-					local _start_pos = pos + Vector3(-2000, -2000, 0)
-					local _d = tweak_data.blackmarket.projectiles.frag.time_cheat or 0.05
-					ChatCommand.time2loopcheck = true
-					ChatCommand.throw_projectile = {}
-					for i = 1, 10 do
-						for j = 1, 10 do
-							local _table_size = table.size(ChatCommand.throw_projectile) + 1
-							table.insert(ChatCommand.throw_projectile, {enable = true, projectile_index = projectile_index, pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
-						end
+
+				ChatCommand.bta_time[pid] = nowtime + 180
+				cmm:say("[".. pname .."] call for Bombing Strike!!")
+				local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
+				local _start_pos = pos + Vector3(-2000, -2000, 0)
+				local _d = tweak_data.blackmarket.projectiles.frag.time_cheat or 0.05
+				ChatCommand.time2loopcheck = true
+				ChatCommand.throw_projectile = {}
+				for i = 1, 10 do
+					for j = 1, 10 do
+						local _table_size = table.size(ChatCommand.throw_projectile) + 1
+						table.insert(ChatCommand.throw_projectile, {enable = true, projectile_index = projectile_index, pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
 					end
 				end
 			else
@@ -263,7 +306,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 					for i = 1, 10 do
 						for j = 1, 10 do
 							local _table_size = table.size(ChatCommand.throw_flash) + 1
-							table.insert(ChatCommand.throw_flash, {enable = true, is_smoke = (_roll == 12 and true or false), pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
+							table.insert(ChatCommand.throw_flash, {enable = true, is_smoke = (_roll == 14 and true or false), pos = _start_pos + Vector3(i*400, j*400, 50), time_do = nowtime + 3 + _d*_table_size})
 						end
 					end
 				else
@@ -276,8 +319,9 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 		end
 	end)	
 	cmm:AddCommand("help", false, false, function()
-		cmm:say("[!bta: Call for Bombing Strike]")
-		cmm:say("[!rtd: Roll something special]")
+		cmm:say("[!begfordoc/!begforammo: God will pity you(once per game)]")
+		cmm:say("[!bta: Call for Bombing Strike(180CD)]")
+		cmm:say("[!rtd: Roll something special(20CD)]")
 		cmm:say("[!jail: Send yourself to jail]")
 		cmm:say("[!vip: Let you know your level]")
 		cmm:say("[!version: Tell something about this MOD]")
