@@ -5,6 +5,7 @@ end
 _G.ChatCommand = _G.ChatCommand or {}
 ChatCommand.now_version = "[2016.11.15]"
 ChatCommand.rtd_time = {0, 0, 0, 0}
+ChatCommand.bta_time = {0, 0, 0, 0}
 ChatCommand.VIP_LIST = ChatCommand.VIP_LIST or {}
 ChatCommand.VIP_LIST_IDX = ChatCommand.VIP_LIST_IDX or {}
 ChatCommand.time2loopcheck = false
@@ -177,7 +178,7 @@ Hooks:PostHook(ChatManager, "init", "ChatCommand_Init", function(cmm, ...)
 			local pos = unit:position()
 			local rot = unit:rotation()
 			if ChatCommand.bta_time[pid] < nowtime then
-				ChatCommand.rtd_time[pid] = nowtime + 80
+				ChatCommand.bta_time[pid] = nowtime + 80
 					cmm:say("[".. pname .."] call for Bombing Strike!!")
 					local projectile_index = tweak_data.blackmarket:get_index_from_projectile_id("frag")
 					local _start_pos = pos + Vector3(-2000, -2000, 0)
